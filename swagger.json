@@ -1,0 +1,462 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "description": "API's task-management application",
+        "title": "TASK-MANAGEMENT API"
+    },
+    "host": "localhost:3200",
+    
+    "paths": {
+       
+        "/api/users/signup": {
+           
+            "post": {
+                "tags": ["User"],
+                "summary": "User Register",
+                "description": "User register in the task-management application",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "User Information",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                },
+                                "gender": {
+                                    "type": "string",
+                                    "enum": ["Male", "Female"]
+                                }
+                            },
+                            "required": ["username", "email", "password", "gender"]
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid input data"
+                    }
+                }
+            }
+        },
+        "/api/users/signin": {
+            "post": {
+                "tags": ["User"],
+                "summary": "User Sign In",
+                "description": "User sign in to the task-management application",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "User Credentials",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["email", "password"]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid user credentials"
+                    }
+                }
+            }
+        },
+        "/api/users/logout": {
+            "get": {
+                "tags": ["User"],
+                "summary": "User Logout",
+                "description": "User logout from the social-media application",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful"
+                    }
+                },
+                "security": [{"jwt": []}] 
+            }
+        },
+        
+        "/api/users/updateProfile": {
+            "put": {
+              "tags": ["User"],
+              "summary": "Update User Details",
+              "description": "Update details of a user by user ID",
+              "parameters": [
+                {
+                  "in": "formData",
+                  "name": "avatar",
+                  "description": "Avatar file to upload",
+                  "required": false,
+                  "type": "file"
+                },
+                {
+                  "in": "formData",
+                  "name": "username",
+                  "description": "User name",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "in": "formData",
+                  "name": "gender",
+                  "description": "User gender",
+                  "required": false,
+                  "type": "string",
+                  "enum": ["Male", "Female"]
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "OK"
+                },
+                "400": {
+                  "description": "Invalid user ID or input data"
+                }
+              },
+              "consumes": ["multipart/form-data"],
+              "produces": ["application/json"],
+              "security": [{"jwt": []}]
+            }
+          },
+          "/api/tasks/createTask": {
+            "post": {
+              "tags": ["Task"],
+              "summary": "Create new task",
+              "description": "Create a new task in task-management application",
+              "parameters": [
+                {
+                  "in": "body",
+                  "name": "body",
+                  "description": "Task details",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "description": "Title of the task",
+                        "example": "Complete project presentation"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Description of the task",
+                        "example": "Create slides and prepare notes"
+                      },
+                      "dueDate": {
+                        "type": "string",
+                        "description": "Due date of the task",
+                        "format": "date",
+                        "example": "2024-06-10"
+                      },
+                      "category": {
+                        "type": "string",
+                        "description": "Category of the task",
+                        "enum": ["Work", "Personal", "Shopping", "Other"],
+                        "default": "Other",
+                        "example": "Work"
+                      }
+                    },
+                    "required": ["title"]
+                  }
+                }
+              ],
+              "responses": {
+                "201": {
+                  "description": "Task created successfully"
+                },
+                "400": {
+                  "description": "Invalid input data"
+                }
+              },
+              "security": [{"jwt": []}]
+            }
+          },
+       
+          "/api/tasks/markTask/{id}": {
+            "put": {
+              "tags": ["Task"],
+              "summary": "Mark Task Complete",
+              "description": "Mark a task as complete by ID",
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "id",
+                  "description": "Task ID",
+                  "required": true,
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Task marked as complete"
+                },
+                "400": {
+                  "description": "Invalid task ID"
+                }
+              },
+              "security": [{"jwt": []}]
+            }
+          },
+          "/api/tasks/viewAllTask": {
+            "get": {
+              "tags": ["Task"],
+              "summary": "View All Tasks",
+              "description": "View all tasks",
+              "responses": {
+                "200": {
+                  "description": "Tasks retrieved successfully"
+                },
+                "404": {
+                  "description": "No tasks found"
+                }
+              },
+              "security": [{"jwt": []}]
+            }
+          },
+          "/api/tasks/pendingTask": {
+            "get": {
+              "tags": ["Task"],
+              "summary": "View Pending Tasks",
+              "description": "View all pending tasks",
+              "responses": {
+                "200": {
+                  "description": "Pending tasks retrieved successfully"
+                },
+                "404": {
+                  "description": "No pending tasks found"
+                }
+              },
+              "security": [{"jwt": []}]
+            }
+          },
+          "/api/tasks/byCategory": {
+            "get": {
+              "tags": ["Task"],
+              "summary": "Find Tasks by Category",
+              "description": "Find tasks by category",
+              "parameters": [
+                {
+                  "in": "query",
+                  "name": "category",
+                  "description": "Category of the task",
+                  "required": true,
+                  "type": "string",
+                  "enum": ["Work", "Personal", "Shopping", "Other"]
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Task found successfully!"
+                },
+                "404": {
+                  "description": "No tasks found with this category"
+                }
+              },
+              "security": [{"jwt": []}]
+            }
+          },
+          "/api/tasks/updateTask": {
+            "put": {
+             "tags": ["Task"],
+              "summary": "Update a task",
+              "description": "Endpoint to update a task",
+              "parameters": [
+                {
+                  "name": "taskId",
+                  "in": "query",
+                  "description": "ID of the task to be updated",
+                  "required": true,
+                  "type": "string"
+                },
+                {
+                  "name": "body",
+                  "in": "body",
+                  "description": "Updated task data",
+                  "required": true,
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      
+                      "description": {
+                        "type": "string"
+                      },
+                      
+                      "dueDate": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "category": {
+                        "type": "string",
+                        "enum": ["Work", "Personal", "Shopping", "Other"]
+                      }
+                    }
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Task updated successfully",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "default": true
+                      },
+                      "msg": {
+                        "type": "string"
+                      },
+                      "task": {
+                        "type": "object"
+                       
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "Task not found or update failed"
+                }
+              },
+              "security": [{"jwt": []}]
+            }
+          },
+          "/api/tasks/bySearch": {
+            "get": {
+              "tags": ["Task"],
+              "summary": "Search tasks",
+              "description": "Endpoint to search tasks based on criteria",
+              "parameters": [
+                {
+                    "name": "category",
+                    "in": "query",
+                    "description": "Category of the task",
+                    "required": false,
+                    "schema": {
+                        "type": "string",
+                        "enum": ["Work", "Personal", "Shopping", "Other"]
+                    }
+                },
+                {
+                    "name": "title",
+                    "in": "query",
+                    "description": "Title of the task",
+                    "required": false,
+                    "schema": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "completed",
+                    "in": "query",
+                    "description": "Completion status of the task boolean value provide",
+                    "required": false,
+                    "schema": {
+                        "type": "boolean"
+                    }
+                }
+            ],
+              "responses": {
+                "200": {
+                  "description": "Tasks found successfully",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "default": true
+                      },
+                      "msg": {
+                        "type": "string"
+                      },
+                      "tasks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                          
+                        }
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "No tasks found for the specified criteria"
+                }
+              },
+              "security": [{"jwt": []}]
+            }
+          },
+
+          "/api/tasks/deleteTask": {
+            "delete": {
+             "tags": ["Task"],
+              "summary": "Delete a task",
+              "description": "Endpoint to delete a task",
+              "parameters": [
+                {
+                  "name": "taskId",
+                  "in": "query",
+                  "description": "ID of the task to be deleted",
+                  "required": true,
+                  "type": "string"
+                }
+               
+              ],
+              "responses": {
+                "200": {
+                  "description": "Task deleted successfully",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "default": true
+                      },
+                      "msg": {
+                        "type": "string"
+                      }
+                      
+                    }
+                  }
+                },
+                "404": {
+                  "description": "Task not found or delete failed"
+                }
+              },
+              "security": [{"jwt": []}]
+            }
+          }
+
+
+
+      
+    },
+    "securityDefinitions": {
+        "jwt": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
